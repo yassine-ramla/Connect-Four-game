@@ -1,0 +1,137 @@
+:root {
+    --white: #fff;
+    --black: #000;
+    --purple: #7945FF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.heading-l {
+    font-size: 56px;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.heading-m {
+    font-size: 24px;
+}
+
+.heading-s {
+    font-size: 20px;
+}
+
+.heading-xs {
+    font-size: 16px;
+}
+
+body {
+    width: 100vw;
+    height: 100svh;
+    min-height: 630px;
+    background-color: var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rules-container {
+    width: 90%;
+    max-width: 480px;
+    height: fit-content;
+    border-radius: 40px;
+    border: 3px solid var(--black);
+    background-color: var(--white);
+    box-shadow: 0px 10px 0px 0px #000;
+    padding: 30px 20px 60px;
+    position: relative;
+    top: -16px
+}
+
+.rules-container h1 {
+    margin-bottom: 29px;
+    text-align: center;
+}
+
+.objective {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 33px;
+}
+
+.objective h3,
+.how-to-play h3 {
+    color: var(--purple);
+}
+
+.objective p {
+    color: var(--black);
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.6610863208770752;
+    text-transform: none;
+}
+
+.how-to-play {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rules {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rule {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+.rule p:first-child {
+    color: var(--black, #000);
+    font-size: 16px;
+}
+
+.rule p:last-child {
+    color: var(--black);
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.6610863208770752;
+    text-transform: none;
+}
+
+
+.check-btn {
+    width: 64px;
+    height: 64px;
+    background-image: url(./images/icon-check.svg);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.check-btn:hover {
+    background-image: url(./images/icon-check-hover.svg);
+}
+
+@media (min-width: 650px) {
+    body {
+        min-height: 600px;
+    }
+}

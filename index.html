@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
+  <link rel="stylesheet" href="start-page.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@600&family=Fraunces:wght@700;900&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <title>Frontend Mentor | Connect Four game</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="./images/logo.svg" alt="connect four logo" />
+    </div>
+    <div onclick="window.localStorage.setItem('cpu', true);window.location.assign('./main-page.html');" id="play-cpu"
+      class="btn-large play-cpu">
+      <p>play vs cpu</p>
+      <img src="./images/player-vs-cpu.svg" alt="play vs cpu" />
+    </div>
+    <div onclick="window.localStorage.setItem('cpu', false);window.location.assign('./main-page.html')" id="play-player"
+      class="btn-large play-player">
+      <p>play vs player</p>
+      <img src="./images/player-vs-player.svg" alt="play vs player" />
+    </div>
+    <div onclick="window.location.assign('./game-rules-page.html')" class="btn-large game-rules">
+      <p>game rules</p>
+    </div>
+  </div>
+</body>
+
+</html>

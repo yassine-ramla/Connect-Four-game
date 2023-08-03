@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@600&family=Fraunces:wght@700;900&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <title>Frontend Mentor | Connect Four game</title>
+</head>
+
+<body>
+  <div id="pause-page">
+    <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);" class="pause-bg"></div>
+    <div class="pause-container">
+      <h1 class="heading-l">pause</h1>
+      <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);" class="btn-large continue-game">continue
+      </div>
+      <div id="restart" class="btn-large continue-game"
+        onclick="restart();document.getElementById('pause-page').style.zIndex = '-99';">restart</div>
+      <div id="quit-game" class="btn-large quit-game" onclick="window.location.assign('./index.html')">quit game</div>
+    </div>
+  </div>
+  <div id="main-page">
+    <div class="main-page-header">
+      <div onclick="document.getElementById('pause-page').style.zIndex = '99'; clearInterval(timerID);" class="menu-btn">
+        <p>menu</p>
+      </div>
+      <div>
+        <img src="./images/logo.svg" alt="connect four gmae logo" />
+      </div>
+      <div class="menu-btn" onclick="restart()">
+        <p>restart</p>
+      </div>
+    </div>
+    <div class="score-container">
+      <div class="score-container-red">
+        <div id="player1-avatar"></div>
+        <p id="player1"></p>
+        <p id="score-red">0</p>
+      </div>
+      <div class="score-container-yellow">
+        <div id="player2-avatar"> </div>
+        <p id="player2"></p>
+        <p id="score-yellow">0</p>
+      </div>
+    </div>
+    <div class="board-container">
+      <div id="playing-preventer"></div>
+      <div class="black-board">
+        <div id="black-col0"></div>
+        <div id="black-col1"></div>
+        <div id="black-col2"></div>
+        <div id="black-col3"></div>
+        <div id="black-col4"></div>
+        <div id="black-col5"></div>
+        <div id="black-col6"></div>
+      </div>
+      <div class="white-board">
+        <div id="white-col0"></div>
+        <div id="white-col1"></div>
+        <div id="white-col2"></div>
+        <div id="white-col3"></div>
+        <div id="white-col4"></div>
+        <div id="white-col5"></div>
+        <div id="white-col6"></div>
+        <div id="marker">
+          <img src="./images/marker-red.svg" alt="marker" />
+        </div>
+      </div>
+    </div>
+    <div id="turn">
+      <p> <span id="current-player"></span> turn</p>
+      <p><span id="time">30</span><span id="second">s</span></p>
+    </div>
+    <div id="wins-rect" class="wins-rect">
+      <p id="winner"></p>
+      <p id="wins-draw"></p>
+      <div class="menu-btn" onclick="playAgain()">
+        play again
+      </div>
+    </div>
+    <div id="turn-bg"></div>
+  </div>
+  <script src="main.js"></script>
+</body>
+
+</html>
