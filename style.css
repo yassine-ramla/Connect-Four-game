@@ -374,14 +374,6 @@ body {
     text-transform: none;
 }
 
-#marker {
-    position: absolute;
-    top: -38px;
-    left: 8px;
-    transition: .5s;
-    display: none;
-}
-
 .ball {
     width: 41px;
     height: 46px;
@@ -609,6 +601,34 @@ body {
         gap: 18px;
     }
 
+    .marker {
+        width: 632px;
+        height: 36px;
+        transition: 400ms;
+        position: relative;
+        top: calc((+100% - 900px)/4 );
+        display: none;
+    }
+
+    #marker {
+        width: 38px;
+        height: 36px;
+        position: absolute;
+        left: 0;
+        transition: 400ms;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+    .marker-red {
+        background-image: url(./images/marker-red.svg);
+    }
+
+    .marker-yellow {
+        background-image: url(./images/marker-yellow.svg);
+    }
+
     .ball {
         width: 70px;
         height: 75px;
@@ -767,11 +787,15 @@ body {
 
 @media (min-width: 1050px) {
     body {
-        min-height: 890px;
+        min-height: 900px;
     }
 
     #pause-page {
         min-height: 890px;
+    }
+
+    .marker {
+        display: inline;
     }
 
     .score-container {

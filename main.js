@@ -56,6 +56,7 @@ const drawWins = document.getElementById("wins-draw");
 const turnBg = document.getElementById("turn-bg");
 const turn = document.getElementById("turn");
 turn.classList.add(player === 1 ? "turn-red" : "turn-yellow");
+const marker = document.getElementById("marker");
 
 const whiteCol0 = document.getElementById("white-col0");
 const whiteCol1 = document.getElementById("white-col1");
@@ -124,6 +125,8 @@ function togglePlayer() {
   }
   turn.classList.toggle("turn-red");
   turn.classList.toggle("turn-yellow");
+  marker.classList.toggle("marker-red");
+  marker.classList.toggle("marker-yellow");
   timer = 30;
   time.innerHTML = 30;
 }
@@ -812,4 +815,32 @@ whiteCol6.addEventListener("click", () => {
       break;
     }
   }
+});
+
+whiteCol0.addEventListener("mouseover", () => {
+  marker.style.left = "35px";
+});
+
+whiteCol1.addEventListener("mouseover", () => {
+  marker.style.left = "125px";
+});
+
+whiteCol2.addEventListener("mouseover", () => {
+  marker.style.left = "210px";
+});
+
+whiteCol3.addEventListener("mouseover", () => {
+  marker.style.left = "300px";
+});
+
+whiteCol4.addEventListener("mouseover", () => {
+  marker.style.left = "385px";
+});
+
+whiteCol5.addEventListener("mouseover", () => {
+  marker.style.left = "475px";
+});
+
+whiteCol6.addEventListener("mouseover", () => {
+  marker.style.left = "560px";
 });

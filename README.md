@@ -41,14 +41,13 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [solution URL](https://your-solution-url.com)
-- Live Site URL: [live site URL](https://your-live-site-url.com)
+- Solution URL: [solution URL](https://www.frontendmentor.io/solutions/connectfourgame-using-just-html-css-and-js-Oy1v0UD84w)
+- Live Site URL: [live site URL](https://yassine-ramla.github.io/Connect-Four-game/)
 
 ## My process
 
 ### Built with
 
-- Semantic HTML5 markup
 - Flexbox
 - CSS Grid
 - Mobile-first workflow

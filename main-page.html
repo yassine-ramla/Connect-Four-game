@@ -16,10 +16,12 @@
 
 <body>
   <div id="pause-page">
-    <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);" class="pause-bg"></div>
+    <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);" class="pause-bg">
+    </div>
     <div class="pause-container">
       <h1 class="heading-l">pause</h1>
-      <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);" class="btn-large continue-game">continue
+      <div onclick="document.getElementById('pause-page').style.zIndex = '-99'; startTimer(timer);"
+        class="btn-large continue-game">continue
       </div>
       <div id="restart" class="btn-large continue-game"
         onclick="restart();document.getElementById('pause-page').style.zIndex = '-99';">restart</div>
@@ -28,7 +30,8 @@
   </div>
   <div id="main-page">
     <div class="main-page-header">
-      <div onclick="document.getElementById('pause-page').style.zIndex = '99'; clearInterval(timerID);" class="menu-btn">
+      <div onclick="document.getElementById('pause-page').style.zIndex = '99'; clearInterval(timerID);"
+        class="menu-btn">
         <p>menu</p>
       </div>
       <div>
@@ -50,6 +53,9 @@
         <p id="score-yellow">0</p>
       </div>
     </div>
+    <div class="marker">
+      <div class="marker-red" id="marker"></div>
+    </div>
     <div class="board-container">
       <div id="playing-preventer"></div>
       <div class="black-board">
@@ -69,9 +75,6 @@
         <div id="white-col4"></div>
         <div id="white-col5"></div>
         <div id="white-col6"></div>
-        <div id="marker">
-          <img src="./images/marker-red.svg" alt="marker" />
-        </div>
       </div>
     </div>
     <div id="turn">
