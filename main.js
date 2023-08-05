@@ -289,7 +289,10 @@ function playAgain() {
   draw = false;
   playedBalls = 0;
   playingPreventer.style.zIndex = "-1";
-  if (cpu === "true" && player !== 1) letCpuPlay();
+  if (cpu === "true" && player !== 1)
+    setTimeout(() => {
+      letCpuPlay();
+    }, 712);
 }
 
 function restart() {
@@ -306,28 +309,9 @@ function restart() {
 
 function letCpuPlay() {
   if (playedBalls < 42) {
-    let randomCol;
-    let bestColValue = bestCol();
-    let bedColsArray = bedCols();
-    if (bestColValue !== -1) randomCol = bestColValue;
-    else {
-      if (emptyCols() === bedColsArray.length) {
-        randomCol = bedColsArray[0];
-      } else {
-        while (true) {
-          let random = Math.floor(Math.random() * 7);
-          if (
-            boardMatrix[random].includes(0) &&
-            !bedColsArray.includes(random)
-          ) {
-            randomCol = random;
-            break;
-          }
-        }
-      }
-    }
+    const randomCol = theColToPlay();
     playedBalls++;
-    let i = boardMatrix[randomCol].indexOf(0);
+    const i = boardMatrix[randomCol].indexOf(0);
     const ball = document.createElement("div");
     ball.classList.add("ball");
     ball.classList.add(rows[i]);
@@ -346,7 +330,6 @@ function letCpuPlay() {
     boardMatrix[randomCol][i] = player;
     if (checkWinner(randomCol, i)) {
       showWinner();
-      playingPreventer.style.zIndex = "2";
       if (player === 1) {
         scoreRed++;
         pScoreRed.innerHTML = scoreRed;
@@ -357,6 +340,8 @@ function letCpuPlay() {
     } else if (playedBalls === 42) {
       draw = true;
       showWinner();
+    } else {
+      playingPreventer.style.zIndex = "-1";
     }
     togglePlayer();
   }
@@ -368,9 +353,9 @@ function emptyCols() {
   return n;
 }
 
-function bestCol() {
+function colToWin() {
   for (let i = 0; i < 7; i++) {
-    let j = boardMatrix[i].indexOf(0);
+    const j = boardMatrix[i].indexOf(0);
     if (j !== -1) {
       //check column
       let n = 1;
@@ -417,16 +402,24 @@ function bestCol() {
           p++;
         } else break;
       if (n > 3) return i;
-      // prevent opponent from winning
-      //ckeck column
-      n = 1;
+    }
+  }
+  return -1;
+}
+
+function colForPlayerToWin() {
+  for (let i = 0; i < 7; i++) {
+    const j = boardMatrix[i].indexOf(0);
+    if (j !== -1) {
+      //check column
+      let n = 1;
       while (j - n > -1)
         if (boardMatrix[i][j - n] === 1) n++;
         else break;
       if (n === 4) return i;
       //check row
-      n = 1;
-      p = 1;
+      else n = 1;
+      let p = 1;
       while (i + n < 7)
         if (boardMatrix[i + n][j] === 1) n++;
         else break;
@@ -464,6 +457,33 @@ function bestCol() {
         } else break;
       if (n > 3) return i;
     }
+  }
+  return -1;
+}
+
+function colForPlayerToWin2() {
+  for (let i = 0; i < 3; i++) {
+    const j = boardMatrix[i].indexOf(0);
+    if (
+      boardMatrix[i][j] === 0 &&
+      boardMatrix[i + 1].indexOf(0) === j &&
+      boardMatrix[i + 1][j] === 0 &&
+      boardMatrix[i + 2][j] === 1 &&
+      boardMatrix[i + 3][j] === 1 &&
+      boardMatrix[i + 4].indexOf(0) === j &&
+      boardMatrix[i + 4][j] === 0
+    )
+      return i + 1;
+    else if (
+      boardMatrix[i][j] === 0 &&
+      boardMatrix[i + 1][j] === 1 &&
+      boardMatrix[i + 2][j] === 1 &&
+      boardMatrix[i + 3].indexOf(0) === j &&
+      boardMatrix[i + 3][j] === 0 &&
+      boardMatrix[i + 4].indexOf(0) === j &&
+      boardMatrix[i + 4][j] === 0
+    )
+      return i;
   }
   return -1;
 }
@@ -523,296 +543,354 @@ function bedCols() {
   return cols;
 }
 
-whiteCol0.addEventListener("click", () => {
+function bedCols2() {
+  let cols = [];
   for (let i = 0; i < 7; i++) {
-    if (boardMatrix[0][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+    if (boardMatrix[i].indexOf(0) === 5) cols.push(i);
+  }
+  return cols;
+}
+
+function goodColToPlay() {}
+
+function theColToPlay() {
+  const colToWinValue = colToWin();
+  if (colToWinValue !== -1) return colToWinValue;
+  const colForPlayerToWinValue = colForPlayerToWin();
+  if (colForPlayerToWinValue !== -1) return colForPlayerToWinValue;
+  const colForPlayerToWin2Value = colForPlayerToWin2();
+  const bedColsArray = bedCols();
+  if (emptyCols() === bedColsArray.length) {
+    return bedColsArray[0];
+  }
+  if (
+    colForPlayerToWin2Value !== -1 &&
+    !bedColsArray.includes(colForPlayerToWin2Value)
+  )
+    return colForPlayerToWin2Value;
+  else if (
+    colForPlayerToWin2Value !== -1 &&
+    !bedColsArray.includes(colForPlayerToWin2Value + 3)
+  )
+    return colForPlayerToWin2Value + 3;
+  while (true) {
+    const random = Math.floor(Math.random() * 7);
+    if (boardMatrix[random].includes(0) && !bedColsArray.includes(random))
+      return random;
+  }
+}
+
+whiteCol0.addEventListener("click", () => {
+  const i = boardMatrix[0].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol0.appendChild(ball);
+    boardMatrix[0][i] = player;
+    let checkWinnerValue = checkWinner(0, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol0.appendChild(ball);
-      boardMatrix[0][i] = player;
-      let checkWinnerValue = checkWinner(0, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol1.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[1][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[1].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol1.appendChild(ball);
+    boardMatrix[1][i] = player;
+    let checkWinnerValue = checkWinner(1, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol1.appendChild(ball);
-      boardMatrix[1][i] = player;
-      let checkWinnerValue = checkWinner(1, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol2.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[2][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[2].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol2.appendChild(ball);
+    boardMatrix[2][i] = player;
+    let checkWinnerValue = checkWinner(2, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol2.appendChild(ball);
-      boardMatrix[2][i] = player;
-      let checkWinnerValue = checkWinner(2, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol3.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[3][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[3].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol3.appendChild(ball);
+    boardMatrix[3][i] = player;
+    let checkWinnerValue = checkWinner(3, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol3.appendChild(ball);
-      boardMatrix[3][i] = player;
-      let checkWinnerValue = checkWinner(3, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol4.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[4][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[4].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol4.appendChild(ball);
+    boardMatrix[4][i] = player;
+    let checkWinnerValue = checkWinner(4, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol4.appendChild(ball);
-      boardMatrix[4][i] = player;
-      let checkWinnerValue = checkWinner(4, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol5.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[5][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[5].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol5.appendChild(ball);
+    boardMatrix[5][i] = player;
+    let checkWinnerValue = checkWinner(5, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol5.appendChild(ball);
-      boardMatrix[5][i] = player;
-      let checkWinnerValue = checkWinner(5, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
 
 whiteCol6.addEventListener("click", () => {
-  for (let i = 0; i < 7; i++) {
-    if (boardMatrix[6][i] === 0) {
-      playedBalls++;
-      const ball = document.createElement("div");
-      ball.classList.add("ball");
-      ball.classList.add(rows[i]);
-      const img1 = document.createElement("img");
-      const img2 = document.createElement("img");
-      if (window.innerWidth < 650) {
-        img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
-        img2.src = "./images/winner-circle-small.svg";
+  const i = boardMatrix[6].indexOf(0);
+  if (i !== -1) {
+    playedBalls++;
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    ball.classList.add(rows[i]);
+    const img1 = document.createElement("img");
+    const img2 = document.createElement("img");
+    if (window.innerWidth < 650) {
+      img1.src = player === 1 ? redSmallBallSrc : yellowSmallBallSrc;
+      img2.src = "./images/winner-circle-small.svg";
+    } else {
+      img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
+      img2.src = "./images/winner-circle-large.svg";
+    }
+    ball.appendChild(img1);
+    ball.appendChild(img2);
+    blackCol6.appendChild(ball);
+    boardMatrix[6][i] = player;
+    let checkWinnerValue = checkWinner(6, i);
+    if (checkWinnerValue) {
+      showWinner();
+      playingPreventer.style.zIndex = "2";
+      if (player === 1) {
+        scoreRed++;
+        pScoreRed.innerHTML = scoreRed;
       } else {
-        img1.src = player === 1 ? redLargeBallSrc : yellowLargeBallSrc;
-        img2.src = "./images/winner-circle-large.svg";
+        scoreYellow++;
+        pScoreYellow.innerHTML = scoreYellow;
       }
-      ball.appendChild(img1);
-      ball.appendChild(img2);
-      blackCol6.appendChild(ball);
-      boardMatrix[6][i] = player;
-      let checkWinnerValue = checkWinner(6, i);
-      if (checkWinnerValue) {
-        showWinner();
-        playingPreventer.style.zIndex = "2";
-        if (player === 1) {
-          scoreRed++;
-          pScoreRed.innerHTML = scoreRed;
-        } else {
-          scoreYellow++;
-          pScoreYellow.innerHTML = scoreYellow;
-        }
-      } else if (playedBalls === 42) {
-        draw = true;
-        showWinner();
-      }
-      togglePlayer();
-      if (!checkWinnerValue && cpu === "true" && player !== 1) letCpuPlay();
-      break;
+    } else if (playedBalls === 42) {
+      draw = true;
+      showWinner();
+    }
+    togglePlayer();
+    if (!checkWinnerValue && cpu === "true" && player !== 1) {
+      playingPreventer.style.zIndex = "2";
+      setTimeout(() => {
+        letCpuPlay();
+      }, 712);
     }
   }
 });
